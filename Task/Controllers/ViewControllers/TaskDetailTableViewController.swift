@@ -56,6 +56,7 @@ class TaskDetailTableViewController: UITableViewController {
         taskNameLabel.text = task.name
         dueDateLabel.text = date
         notesTextView.text = task.notes
+        title = task.name
     }
     
     func updateTask() {

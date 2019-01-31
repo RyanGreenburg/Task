@@ -8,6 +8,7 @@
 
 import Foundation
 import CoreData
+import UserNotifications
 
 class TaskController {
     
@@ -23,10 +24,7 @@ class TaskController {
         fetchRequest.sortDescriptors = [isCompleteSort, isDueSort]
         
         return NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: CoreDataStack.context, sectionNameKeyPath: "isComplete", cacheName: nil)
-        
     }()
-    
-    // MARK: - CRUD Functions
     
     init() {
         do {
@@ -35,6 +33,8 @@ class TaskController {
             print("error loading fetched results: \(error) : \(error.localizedDescription)")
         }
     }
+    
+    // MARK: - CRUD Functions
     // Create
     func add(taskWithName name: String, notes: String?, due: Date?) {
         Task(name: name, notes: notes, due: due, isComplete: false)
@@ -54,14 +54,11 @@ class TaskController {
     // Step 3 Fix this... if/else needed
     func toggleIsCompleteFor(task: Task) {
         if task.isComplete == false {
-            task.isComplete = true
+            task.isComplete = true; self.cancelLocalNotification(for: task)
         } else {
-            task.isComplete = false
+            task.isComplete = false; self.scheduleUserNotifications(for: task)
         }
-        //        switch task.isComplete {
-        //        case true: task.isComplete = false
-        //        case false: task.isComplete = true
-        //        }
+        saveToPersistenceStore()
     }
     
     // Delete
@@ -83,3 +80,30 @@ class TaskController {
     }
 }
 
+extension TaskController {
+    func scheduleUserNotifications(for task: Task) {
+        let notificationContent = UNMutableNotificationContent()
+        notificationContent.sound = UNNotificationSound.default
+        notificationContent.title = "\(task.name ?? "Task Due")"
+        notificationContent.body = "Your task is due!"
+        notificationContent.badge = 1
+        
+        guard let dueDate = task.due,
+            let uuid = task.uuid else{ return }
+        
+        let fireDate = dueDate
+        let dateComponents = Calendar.current.dateComponents([.month, .day], from: fireDate)
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dateComponents, repeats: false)
+        let request = UNNotificationRequest(identifier: uuid, content: notificationContent, trigger: trigger)
+        UNUserNotificationCenter.current().add(request) { (error) in
+            if let error = error {
+                print(error.localizedDescription)
+            }
+        }
+    }
+    
+    func cancelLocalNotification(for task: Task) {
+        guard let uuid = task.uuid else { return }
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: [uuid])
+    }
+}
