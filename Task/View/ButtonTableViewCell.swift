@@ -14,14 +14,11 @@ class ButtonTableViewCell: UITableViewCell {
     
     // Step 2
     weak var delegate: ButtonTableViewCellDelegate?
-    
+    // Outlets
     @IBOutlet weak var primaryLabel: UILabel!
     @IBOutlet weak var completeButton: UIButton!
     
-    override func awakeFromNib() {
-        super.awakeFromNib()
-    }
-    
+    // Actions
     @IBAction func buttonTapped(_ sender: Any) {
        delegate?.buttonCellButtonTapped(self)
     }

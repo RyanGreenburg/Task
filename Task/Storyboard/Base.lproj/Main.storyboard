@@ -67,12 +67,24 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="igM-AJ-aeE">
+                        <nil key="title"/>
+                        <segmentedControl key="titleView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="bar" selectedSegmentIndex="0" id="eq7-31-KLZ">
+                            <rect key="frame" x="105" y="7" width="165" height="30"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <segments>
+                                <segment title="Incomplete"/>
+                                <segment title="Complete"/>
+                            </segments>
+                        </segmentedControl>
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="BKG-Lt-Uq9">
                             <connections>
                                 <segue destination="Dox-WV-44J" kind="show" id="OqP-z8-sSQ"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="completeSegmentControl" destination="eq7-31-KLZ" id="fuw-Ep-oE9"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="nE1-Xn-s1b" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
